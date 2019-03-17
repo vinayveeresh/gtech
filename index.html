@@ -1,1 +1,106 @@
-<h1>hello!</h1>
+<html>
+<head>
+    <title>Genentech JSON WDC</title>
+    
+    <meta http-equiv="Cache-Control" content="no-store" />
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://connectors.tableau.com/libs/tableauwdc-2.0.0-beta.js"></script>
+    <script>
+		(function () {
+		    var myConnector = tableau.makeConnector();
+
+			myConnector.init = function(initCallback) {
+			    initCallback();
+		        tableau.connectionName = "genentech_JSON";
+			    tableau.submit();
+			};
+
+			myConnector.getSchema = function (schemaCallback) {
+
+			        var cols = [{
+        id: "ssn",
+        dataType: tableau.dataTypeEnum.string
+    }, {
+        id: "firstname",
+        alias: "firstname",
+        dataType: tableau.dataTypeEnum.float
+    }, {
+        id: "lastname",
+        alias: "lastname",
+        dataType: tableau.dataTypeEnum.string
+    }, {
+        id: "gender",
+        dataType: tableau.dataTypeEnum.string
+    }];
+
+    var tableSchema = {
+        id: "healthdatafeed",
+        alias: "patients with multiple disorders",
+        columns: cols
+    };
+
+			    schemaCallback([tableSchema]);
+			};
+
+			myConnector.getData = function(table, doneCallback) {
+			$.getJSON("http://genentechpoc-mule.us-e2.cloudhub.io/api/athenajson", function(resp) {
+        var feat = resp,
+            tableData = [];
+
+        // Iterate over the JSON object
+        for (var i = 0, len = feat.length; i < len; i++) {
+            tableData.push({
+                "ssn": feat[i].ssn,
+                "firstname": feat[i].firstname,
+                "lastname": feat[i].lastname,
+                "gender": feat[i].gender
+            });
+        }
+
+                          table.appendRows(tableData);
+					        doneCallback();
+					    });
+					};
+
+		    tableau.registerConnector(myConnector);
+
+			$(document).ready(function () {
+			    $("#submitButton").click(function () {
+			        tableau.connectionName = "genentech_JSON";
+			        tableau.submit();
+			    });
+			});
+		})();
+	</script>
+	<style>
+		body {
+		    background-image: url("ipad_wallpaper800x600.jpg");
+			background-repeat: no-repeat;
+			background-position: center top;
+		    background-color: #cccccc;
+		}
+		a {
+		    color: #265380;
+		}
+		.center {
+			color: #21140F;
+			text-align: center;
+			margin: auto;
+			margin-top: 50px;
+			width: 600px;
+			opacity: 0.5;
+		}
+	</style>
+</head>
+   
+<body>
+	<div class="center">
+		This page is a Tableau Web Data Connector for Tableau v10 for <a href=https://hearthstonejson.com>Hearthstone JSON</a> data.
+		<p>
+		Please use Tableau to connect to this URL.
+	</div>
+</body>
+</html>
