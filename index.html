@@ -21,18 +21,31 @@
 			myConnector.getSchema = function (schemaCallback) {
 
 			        var cols = [{
-        id: "ssn",
+        id: "registrationnumber",
         dataType: tableau.dataTypeEnum.string
+    }, {
+        id: "registrationdate",
+        alias: "registrationdate",
+        dataType: tableau.dataTypeEnum.float
     }, {
         id: "firstname",
         alias: "firstname",
         dataType: tableau.dataTypeEnum.float
     }, {
+        id: "middlename",
+        alias: "middlename",
+        dataType: tableau.dataTypeEnum.string
+    }, {
         id: "lastname",
-        alias: "lastname",
         dataType: tableau.dataTypeEnum.string
     }, {
         id: "gender",
+        dataType: tableau.dataTypeEnum.string
+    }, {
+        id: "birthdate",
+        dataType: tableau.dataTypeEnum.string
+    }, {
+        id: "state",
         dataType: tableau.dataTypeEnum.string
     }];
 
@@ -46,17 +59,22 @@
 			};
 
 			myConnector.getData = function(table, doneCallback) {
-			$.getJSON("http://genentechpoc-mule.us-e2.cloudhub.io/api/athenajson", function(resp) {
+			$.getJSON("https://genentechpoc-mule.us-e2.cloudhub.io/api/athenajson", function(resp) {
         var feat = resp,
             tableData = [];
 
         // Iterate over the JSON object
-        for (var i = 0, len = feat.length; i < len; i++) {
+		
+		for (var i = 0, len = feat.length; i < len; i++) {
             tableData.push({
-                "ssn": feat[i].ssn,
-                "firstname": feat[i].firstname,
-                "lastname": feat[i].lastname,
-                "gender": feat[i].gender
+                "registrationnumber": feat[i].id
+				//"registrationdate": feat[i].entries.registrationdate,
+                //"firstname": feat[i].entries.firstname,
+                //"middlename": feat[i].entries.middlename,
+                //"lastname": feat[i].entries.lastname,
+				//"gender": feat[i].entries.gender,
+                //"birthdate": feat[i].entries.birthdate,
+                //"state": feat[i].entries.state
             });
         }
 
